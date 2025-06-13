@@ -1,5 +1,5 @@
 "use client";
-import { modelsMap } from "@/src/constants/models";
+import { ModelKey, modelsMap } from "@/src/constants/models";
 import { Button } from "@/src/components/ui/button";
 import { Textarea } from "@/src/components/ui/textarea";
 import { LllmSelect } from "@/src/components/chat/llms-select";
@@ -17,6 +17,8 @@ import { SendIcon, StopCircle } from "lucide-react";
 import { LlmConfigDropdownMenu } from "./llm-config-drowpdown-menu";
 import { useChat } from "@ai-sdk/react";
 import * as React from "react";
+import { useQueryState } from "nuqs";
+
 const PromptArea = ({ chat }: { chat: ReturnType<typeof useChat> }) => {
   const { handleSubmit, status, input, setInput, stop } = chat;
   return (
@@ -48,15 +50,20 @@ const PromptArea = ({ chat }: { chat: ReturnType<typeof useChat> }) => {
 //======================================
 export function Chat() {
   const { llm, setLlm, chat, clearMessages } = useChatManager();
+  const [currentModel, setModel] = useQueryState("llm");
   const { messages } = chat;
   React.useEffect(() => {
-    setLlm("gpt-4o-mini");
+    setLlm((currentModel as ModelKey) || "gpt-4o-mini");
   }, []);
+  const onSelectModel = (model: ModelKey) => {
+    setModel(model);
+    setLlm(model);
+  };
   return (
     <>
       <section className="border mx-auto max-w-4xl w-full grow rounded-lg border-border/50 border-dashed flex flex-col mb-24">
         <div className="pb-2 flex justify-between items-center gap-4 border-b border-border/50 border-dashed p-2 sm:p-4">
-          <LllmSelect llm={llm} onChange={setLlm} />
+          <LllmSelect llm={llm} onSelectModel={onSelectModel} />
           {/* {status} */}
           <LlmConfigDropdownMenu llm={llm} />
         </div>

@@ -6,7 +6,6 @@ import {
 import { Button } from "@/src/components/ui/button";
 import * as React from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/src/lib/utils";
 import {
   Command,
   CommandEmpty,
@@ -25,7 +24,6 @@ import { DeepseekLogo } from "@/src/components/icons/deepseek";
 import { useChatStore } from "@/src/hooks/use-chat-store";
 import { AnthropicLogo } from "@/src/components/icons/anthropic";
 import { PerplexityLogo } from "@/src/components/icons/perplexity";
-
 export const logosIcons = {
   openai: OpenAILogo,
   deepseek: DeepseekLogo,
@@ -35,13 +33,15 @@ export const logosIcons = {
 
 export function LllmSelect({
   llm,
-  onChange,
+  onSelectModel,
 }: {
   llm: string | undefined;
-  onChange: (llm: ModelKey) => void;
+  onSelectModel: (llm: ModelKey) => void;
 }) {
   const [open, setOpen] = React.useState(false);
   const provider = useChatStore((s) => s.provider);
+  const apiKeys = useChatStore((s) => s.apiKeys);
+
   const Logo = logosIcons[provider as keyof typeof logosIcons];
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -72,9 +72,13 @@ export function LllmSelect({
               ([provider, models]) => {
                 const Logo =
                   logosIcons[models[0].providerId as keyof typeof logosIcons];
+                const hasApiKey = apiKeys[provider];
                 return (
                   <>
-                    <CommandGroup key={provider} className="space-y-2 mb-3 border-b border-border/50">
+                    <CommandGroup
+                      key={provider}
+                      className="space-y-2 mb-3 border-b border-border/50"
+                    >
                       <div className="font-semibold flex items-center gap-2 mb-1 px-2">
                         <span className="size-4">
                           <Logo />
@@ -82,6 +86,9 @@ export function LllmSelect({
                         <div className="flex items-center justify-between w-full">
                           {models[0].provider}
                           {/* <span className="font-normal">{models.length}</span> */}
+                          {hasApiKey && (
+                            <span className="size-3 border rounded-full bg-green-500 border-green-600" />
+                          )}
                         </div>
                       </div>
                       {models.map((model) => {
@@ -91,19 +98,15 @@ export function LllmSelect({
                             key={model.name}
                             value={model.id}
                             onSelect={(currentValue) => {
-                              onChange(currentValue as ModelKey);
+                              onSelectModel(currentValue as ModelKey);
                               useChatStore.persist.rehydrate();
                               setOpen(false);
                             }}
                           >
-                            <span className="size-4 border rounded-full bg-muted/80 border-border/50"></span>
+                            <div className="size-5 border rounded-full border-border/50 grid place-items-center">
+                              {llm === model.id && <Check className="size-3" />}
+                            </div>
                             {model.name}
-                            <Check
-                              className={cn(
-                                "ml-auto",
-                                llm === model.id ? "opacity-100" : "opacity-0"
-                              )}
-                            />
                           </CommandItem>
                         );
                       })}
