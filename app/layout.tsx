@@ -25,10 +25,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased scroll-smooth`}
-      >
+    <html
+      lang="en"
+      style={{ colorScheme: "dark" }}
+      className="dark antialiased scroll-smooth"
+    >
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <Providers>{children}</Providers>
         <Toaster position="top-center" />
       </body>
