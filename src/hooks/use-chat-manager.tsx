@@ -1,6 +1,5 @@
 import { useChatStore } from "@/src/hooks/use-chat-store";
 import { useChat } from "@ai-sdk/react";
-import { useLocalStorage } from "@mantine/hooks";
 import { toast } from "sonner";
 
 export const useChatManager = () => {
@@ -8,9 +7,7 @@ export const useChatManager = () => {
   const setModel = useChatStore((s) => s.setModel);
   const aiProvider = useChatStore((s) => s.provider);
   const modelsDetails = useChatStore((s) => s.modelsDetails);
-  const [apiKey] = useLocalStorage<string>({
-    key: `apikey-${aiProvider}`,
-  });
+  const apiKey = useChatStore((s) => s.apiKeys[aiProvider]);
   const options = Object.entries(modelsDetails[model]?.options || {}).reduce(
     (acc, [key, value]) => {
       acc[key as keyof typeof value] = value.value || value.default;
