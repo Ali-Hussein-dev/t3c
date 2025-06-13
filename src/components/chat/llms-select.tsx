@@ -23,13 +23,14 @@ import {
 import { OpenAILogo } from "@/src/components/icons/openai";
 import { DeepseekLogo } from "@/src/components/icons/deepseek";
 import { useChatStore } from "@/src/hooks/use-chat-store";
-import { CommandSeparator } from "cmdk";
 import { AnthropicLogo } from "@/src/components/icons/anthropic";
+import { PerplexityLogo } from "@/src/components/icons/perplexity";
 
 export const logosIcons = {
   openai: OpenAILogo,
   deepseek: DeepseekLogo,
   anthropic: AnthropicLogo,
+  perplexity: PerplexityLogo,
 };
 
 export function LllmSelect({
@@ -69,17 +70,18 @@ export function LllmSelect({
             <CommandEmpty>No model found.</CommandEmpty>
             {Object.entries(groupedModelsByProvider).map(
               ([provider, models]) => {
-                const Logo = logosIcons[models[0].providerId as keyof typeof logosIcons];
+                const Logo =
+                  logosIcons[models[0].providerId as keyof typeof logosIcons];
                 return (
                   <>
-                    <CommandGroup key={provider} className="space-y-2">
+                    <CommandGroup key={provider} className="space-y-2 mb-3 border-b border-border/50">
                       <div className="font-semibold flex items-center gap-2 mb-1 px-2">
                         <span className="size-4">
                           <Logo />
                         </span>
                         <div className="flex items-center justify-between w-full">
                           {models[0].provider}
-                          <span className="font-normal">{models.length}</span>
+                          {/* <span className="font-normal">{models.length}</span> */}
                         </div>
                       </div>
                       {models.map((model) => {
@@ -106,7 +108,6 @@ export function LllmSelect({
                         );
                       })}
                     </CommandGroup>
-                    <CommandSeparator />
                   </>
                 );
               }

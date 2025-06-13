@@ -1,5 +1,6 @@
 import { providersConfigs } from "./llm-configs";
 
+
 export const modelsMap = {
   "gpt-4o": {
     id: "gpt-4o",
@@ -29,7 +30,7 @@ export const modelsMap = {
   },
   "deepseek-chat": {
     id: "deepseek-chat",
-    name: "DeepSeek-Chat",
+    name: "deepseek-chat",
     description:
       "DeepSeek's most capable and cost effective model in the GPT-3.5 family optimized for chat purposes, but also works well for traditional completions tasks.",
     providerId: "deepseek",
@@ -42,7 +43,7 @@ export const modelsMap = {
   },
   "claude-3-5-sonnet-latest": {
     id: "claude-3-5-sonnet-latest",
-    name: "Claude-3-5-sonnet-latest",
+    name: "claude-3-5-sonnet-latest",
     description:
       "Anthropic's most capable and cost effective model in the GPT-3.5 family optimized for chat purposes, but also works well for traditional completions tasks.",
     providerId: "anthropic",
@@ -52,6 +53,32 @@ export const modelsMap = {
       pricing: "https://platform.anthropic.com/docs/pricing",
     },
     options: providersConfigs.anthropic,
+  },
+  "sonnar": {
+    id: "sonnar",
+    name: "sonnar",
+    description:
+      "Perplexity's lightweight offering with search grounding, quicker and cheaper than Sonar Pro.",
+    providerId: "perplexity",
+    provider: "Perplexity",
+    logo: "perplexity",
+    urls: {
+      pricing: "https://docs.perplexity.ai/docs/pricing",
+    },
+    options: providersConfigs.perplexity,
+  },
+  "sonnar-pro": {
+    id: "sonnar-pro",
+    name: "sonnar-pro",
+    description:
+      "Perplexity's lightweight offering with search grounding, quicker and cheaper than Sonar Pro.",
+    providerId: "perplexity",
+    provider: "Perplexity",
+    logo: "perplexity",
+    urls: {
+      pricing: "https://docs.perplexity.ai/docs/pricing",
+    },
+    options: providersConfigs.perplexity,
   },
 } as const;
 
