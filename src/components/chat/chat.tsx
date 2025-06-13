@@ -1,0 +1,114 @@
+"use client";
+import { modelsMap } from "@/src/constants/models";
+import { Button } from "@/src/components/ui/button";
+import { Textarea } from "@/src/components/ui/textarea";
+import { LllmSelect } from "@/src/components/chat/llms-select";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/src/components/ui/tabs";
+import { ModelInfo } from "@/src/components/chat/model-info";
+import { MdClear } from "react-icons/md";
+import { useChatManager } from "@/src/hooks/use-chat-manager";
+import { Message } from "@/src/components/chat/message";
+import { SendIcon, StopCircle } from "lucide-react";
+import { LlmConfigDropdownMenu } from "./llm-config-drowpdown-menu";
+import { useChat } from "@ai-sdk/react";
+import * as React from "react";
+const PromptArea = ({ chat }: { chat: ReturnType<typeof useChat> }) => {
+  const { handleSubmit, status, input, setInput, stop } = chat;
+  return (
+    <div className="fixed bottom-0 right-0 sm:pb-2 pt-8 w-full items-center flex justify-center bg-gradient-to-t from-background via-background/40 to-transparent">
+      <form
+        onSubmit={handleSubmit}
+        className="flex gap-2 px-2 py-3 sm:py-6 w-full sm:px-4 border-y sm:border border-border/50 border-dashed bg-background max-w-4xl mx-auto sm:rounded-lg pb-4"
+      >
+        <Textarea
+          placeholder="Type your message here..."
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          className="rounded-md min-h-[38px] flex-1 max-h-[3 0vh] text-sm resize-none scroll-m-2 focus:ring-0 focus:outline-none pr-9 field-sizing-content border-none bg-transparent max-h-[25vh] sm:max-h-[35vh] md:max-h-[50vh]"
+        />
+        {status === "streaming" ? (
+          <Button onClick={stop} type="button">
+            <StopCircle />
+          </Button>
+        ) : (
+          <Button disabled={status === "submitted" || status === "error"}>
+            <SendIcon />
+          </Button>
+        )}
+      </form>
+    </div>
+  );
+};
+
+//======================================
+export function Chat() {
+  const { llm, setLlm, chat, clearMessages } = useChatManager();
+  const { messages } = chat;
+  React.useEffect(() => {
+    setLlm("gpt-4o-mini");
+  }, []);
+  return (
+    <>
+      <section className="border mx-auto max-w-4xl w-full grow rounded-lg border-border/50 border-dashed flex flex-col mb-24">
+        <div className="pb-2 flex justify-between items-center gap-4 border-b border-border/50 border-dashed p-2 sm:p-4">
+          <LllmSelect llm={llm} onChange={setLlm} />
+          {/* {status} */}
+          <LlmConfigDropdownMenu llm={llm} />
+        </div>
+        {llm && messages.length < 1 && (
+          <div className="p-2 sm:p-4 py-6 sm:py-8 grow">
+            <ModelInfo {...modelsMap[llm]} />
+          </div>
+        )}
+        {messages.length > 0 && (
+          <div className="px-2 sm:px-4 py-6 grow">
+            <Tabs defaultValue="chat">
+              <TabsList>
+                <TabsTrigger value="chat">Chat</TabsTrigger>
+                <TabsTrigger value="json">JSON</TabsTrigger>
+              </TabsList>
+              <TabsContent
+                value="chat"
+                className="p-2 sm:p-4 bg-secondary rounded-lg"
+              >
+                <div className="space-y-3">
+                  {messages.map((message, i) => (
+                    <div key={i}>
+                      <Message role={message.role} content={message.content} />
+                    </div>
+                  ))}
+                  {chat.status === "submitted" && (
+                    <div className="w-full">Thinking...</div>
+                  )}
+                </div>
+                {chat.status == "ready" && (
+                  <div className="flex justify-end pt-4">
+                    <Button variant="outline" onClick={clearMessages} size="sm">
+                      <MdClear /> Clear Messages
+                    </Button>
+                  </div>
+                )}
+              </TabsContent>
+              <TabsContent
+                value="json"
+                className="p-2 sm:p-4 bg-secondary rounded-lg"
+              >
+                <code>
+                  <pre className="text-wrap p-2 border rounded-md border-border/50">
+                    {JSON.stringify(messages || {}, null, 2)}
+                  </pre>
+                </code>
+              </TabsContent>
+            </Tabs>
+          </div>
+        )}
+      </section>
+      <PromptArea chat={chat} />
+    </>
+  );
+}
