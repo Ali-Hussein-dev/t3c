@@ -11,14 +11,14 @@ export function Message({
   if (role === "user") {
     return (
       <div className="flex items-center gap-2 justify-end w-full">
-        <div className="bg-card p-2 rounded-lg px-3">
+        <div className="bg-card p-2 rounded-lg px-3 prose dark:prose-invert">
           <Markdown>{content}</Markdown>
         </div>
       </div>
     );
   }
   return (
-    <div className="w-full">
+    <div className="w-full prose dark:prose-invert max-w-full">
       <Markdown>{content}</Markdown>
     </div>
   );

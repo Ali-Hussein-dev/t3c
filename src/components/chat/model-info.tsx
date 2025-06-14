@@ -56,7 +56,7 @@ export const ModelInfo = ({
   const Logo = logosIcons[providerId as keyof typeof logosIcons];
   const apiKeys = useChatStore((s) => s.apiKeys);
   return (
-    <Card className="border-border/40 dark:border-border/10 bg-card/40 pb-0">
+    <Card className="border-border/40 dark:border-border/10 bg-card/80 pb-0">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Logo />

@@ -53,9 +53,9 @@ export function LllmSelect({
           className="w-[240px] justify-between"
         >
           <div className="flex items-center gap-2">
-            <span className="size-4">
+            <div className="size-4">
               <Logo />
-            </span>
+            </div>
             {llm
               ? modelsList.find((model) => model.id === llm)?.name
               : "Select model..."}
@@ -80,9 +80,9 @@ export function LllmSelect({
                       className="space-y-2 mb-3 border-b border-border/50"
                     >
                       <div className="font-semibold flex items-center gap-2 mb-1 px-2">
-                        <span className="size-4">
+                        <div className="size-4">
                           <Logo />
-                        </span>
+                        </div>
                         <div className="flex items-center justify-between w-full">
                           {models[0].provider}
                           {/* <span className="font-normal">{models.length}</span> */}
