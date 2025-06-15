@@ -11,7 +11,7 @@ export function Message({
   if (role === "user") {
     return (
       <div className="flex items-center gap-2 justify-end w-full">
-        <div className="bg-card p-2 rounded-lg px-3 prose dark:prose-invert">
+        <div className="bg-card p-2 rounded-lg px-3 prose dark:prose-invert rounded-tr-none">
           <Markdown>{content}</Markdown>
         </div>
       </div>

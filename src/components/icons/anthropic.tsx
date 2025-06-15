@@ -6,7 +6,7 @@ export function AnthropicLogo() {
       width="16"
       strokeLinejoin="round"
       viewBox="0 0 16 16"
-      style={{ color: "currentcolor;" }}
+      style={{ color: "currentcolor" }}
     >
       <g transform="translate(0,2)">
         <path

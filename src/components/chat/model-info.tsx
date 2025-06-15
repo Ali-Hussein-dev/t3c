@@ -30,18 +30,35 @@ const ApiKeyInput = ({
     setApiKey(providerId, value || "");
     toast.success("API key saved locally");
   };
+  const onDelete = () => {
+    setApiKey(providerId, "");
+    setValue(undefined);
+    toast.success("API key deleted locally");
+  };
   return (
     <div className="flex gap-2 items-center">
       <Input
         placeholder={`Enter your API key for ${providerId}`}
         defaultValue={apiKey}
-        value={value}
+        value={value || ""}
         onChange={(e) => setValue(e.target.value)}
         type="password"
       />
-      <Button onClick={onSave} type="button" variant="outline">
-        Save
-      </Button>
+      {apiKey && (
+        <Button onClick={onDelete} type="button" variant="outline">
+          Delete
+        </Button>
+      )}
+      {value !== apiKey && (
+        <Button
+          onClick={onSave}
+          disabled={!value}
+          type="button"
+          variant="outline"
+        >
+          Save
+        </Button>
+      )}
     </div>
   );
 };

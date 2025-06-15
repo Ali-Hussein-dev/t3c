@@ -17,7 +17,8 @@ function PopoverTrigger({
   return (
     <PopoverPrimitive.Trigger
       data-slot="popover-trigger"
-      className="border-border dark:border-border"
+      className={cn("border-border dark:border-border", props.className)}
+      // className={cn("border-border dark:border-border", props.className)}
       {...props}
     />
   );
