@@ -20,8 +20,17 @@ import * as React from "react";
 import { useQueryState } from "nuqs";
 import { Card, CardHeader, CardTitle } from "../ui/card";
 
-const PromptArea = ({ chat }: { chat: ReturnType<typeof useChat> }) => {
-  const { handleSubmit, status, input, setInput, stop } = chat;
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // if (isGenerating) return;
+    if (e.key === "Enter" && !e.shiftKey) {
+      // sendMessage?.(editor.getText());
+      onSubmit(e as unknown as React.FormEvent<HTMLFormElement>);
+    }
+    if (e.key === "Enter" && e.shiftKey) {
+      e.preventDefault();
+      // e.currentTarget.scrollTop = e.currentTarget.scrollHeight;
+    }
+  };
   return (
     <div className="fixed bottom-0 right-0 sm:pb-2 pt-8 w-full items-center flex justify-center bg-gradient-to-t from-background via-background/40 to-transparent">
       <form
@@ -32,7 +41,8 @@ const PromptArea = ({ chat }: { chat: ReturnType<typeof useChat> }) => {
           placeholder="Type your message here..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          className="rounded-md min-h-[38px] flex-1 max-h-[3 0vh] text-sm resize-none scroll-m-2 focus:ring-0 focus:outline-none pr-9 field-sizing-content border-none bg-transparent max-h-[25vh] sm:max-h-[35vh] md:max-h-[50vh]"
+          className="rounded-md min-h-[38px] flex-1 resize-none scroll-m-2 focus:ring-0 focus:outline-none pr-9 field-sizing-content border-none max-h-[25vh] sm:max-h-[35vh] md:max-h-[50vh]"
+          onKeyDown={handleKeyDown}
         />
         {status === "streaming" ? (
           <Button onClick={stop} type="button">
