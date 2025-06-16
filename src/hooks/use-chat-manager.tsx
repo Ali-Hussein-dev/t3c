@@ -1,30 +1,46 @@
-import { useChatStore } from "@/src/hooks/use-chat-store";
+import { useModelsStore } from "@/src/hooks/use-models-store";
 import { useChat } from "@ai-sdk/react";
 import { toast } from "sonner";
+import { useThreadStore } from "./use-thread-store";
+import { generateId } from "ai";
+import * as React from "react";
+import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export const useChatManager = () => {
-  const model = useChatStore((s) => s.model);
-  const setModel = useChatStore((s) => s.setModel);
-  const aiProvider = useChatStore((s) => s.provider);
-  const modelsDetails = useChatStore((s) => s.modelsDetails);
-  const apiKey = useChatStore((s) => s.apiKeys[aiProvider]);
-  const options = Object.entries(modelsDetails[model]?.options || {}).reduce(
-    (acc, [key, value]) => {
-      acc[key as keyof typeof value] = value.value || value.default;
-      return acc;
-    },
-    {} as Record<string, number>
-  );
+  const params = useParams<{ threadId: string }>();
+  const threadId = params.threadId;
+
+  const selectedModel = useModelsStore((s) => s.model);
+  const aiProvider = useModelsStore((s) => s.provider);
+  const modelsDetails = useModelsStore((s) => s.modelsDetails);
+  const apiKey = useModelsStore((s) => s.apiKeys[aiProvider]);
+  const setModel = useModelsStore((s) => s.setModel);
+
+  const thread = useThreadStore((s) => s.getThreadById(threadId));
+  const removeThread = useThreadStore((s) => s.remove);
+  const insertThread = useThreadStore((s) => s.insert);
+  const addMessage = useThreadStore((s) => s.addMessage);
+  const hasThread = useThreadStore((s) => s.has(threadId));
+
+  const router = useRouter();
+  const [finishedStreaming, setFinishedStreaming] = React.useState(false);
+
+  const modelOptions = Object.entries(
+    modelsDetails[selectedModel]?.options || {}
+  ).reduce((acc, [key, value]) => {
+    acc[key as keyof typeof value] = value.value || value.default;
+    return acc;
+  }, {} as Record<string, number>);
   const chat = useChat({
     api: "/api/generate",
     body: {
       provider: aiProvider,
-      model,
+      model: selectedModel,
       apiKey,
-      options,
+      options: modelOptions,
     },
-    // initialInput: "Hi there",
-    initialMessages: [],
+    initialMessages: thread?.messages || [],
     onError: (error) => {
       if (error.message) {
         toast.error(error.message);
@@ -34,22 +50,65 @@ export const useChatManager = () => {
         console.error(error);
       }
     },
-    // onFinish: (data) => {
-    //   // setData(data);
-    //   toast.success("Hope you like it", {
-    //     closeButton: true,
-    //   });
-    // },
+    onFinish: () => {
+      setFinishedStreaming(true);
+    },
   });
+  console.info("chat status", chat.status);
+  React.useEffect(() => {
+    console.log("running useEffect", finishedStreaming);
+    if (finishedStreaming) {
+      const messageLength = chat.messages.length;
+      if (hasThread) {
+        console.log("adding message");
+        addMessage({
+          threadId,
+          message: {
+            ...chat.messages[messageLength - 1],
+            provider: aiProvider,
+          },
+        });
+      } else {
+        // When user on the chat page without threadId
+        const userMessage = chat.messages[0];
+        console.log("inserting thread", { userMessage });
+        const id = threadId || "thread-" + generateId();
+
+        insertThread({ id, message: userMessage });
+
+        addMessage({
+          threadId: id,
+          message: chat.messages[1],
+        });
+        // maybe push to new thread page
+        const searchParams = selectedModel ? `?llm=${selectedModel}` : "";
+        console.log("pushing to new thread", `/chat/${id}${searchParams}`);
+        router.push(`/chat/${id}${searchParams}`);
+      }
+      setFinishedStreaming(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [finishedStreaming, chat.messages]);
+  ///------------------------------handlers
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    chat.handleSubmit(e);
+  };
   const clearMessages = () => {
     chat.setMessages([]);
+    if (threadId) {
+      removeThread(threadId);
+      router.push("/chat");
+      toast.success("Thread cleared");
+    }
   };
 
   return {
-    llm: model,
+    llm: selectedModel,
     setLlm: setModel,
     provider: aiProvider,
     chat,
     clearMessages,
+    onSubmit,
   };
 };
