@@ -49,7 +49,7 @@ const PromptArea = ({
           placeholder="Type your message here..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          className="rounded-md min-h-[38px] flex-1 resize-none scroll-m-2 focus:ring-0 focus:outline-none pr-9 field-sizing-content border-none max-h-[25vh] sm:max-h-[35vh] md:max-h-[50vh]"
+          className="rounded-md min-h-[38px] flex-1 resize-none scroll-m-2 focus:ring-0 focus:outline-none pr-9 field-sizing-content border-none max-h-[25vh] sm:max-h-[35vh] md:max-h-[50vh] bg-input/30"
           onKeyDown={handleKeyDown}
         />
         {status === "streaming" ? (
@@ -81,7 +81,7 @@ export function Chat() {
   React.useEffect(() => {
     // Set initial model of model from query param
     setLlm((currentModel as ModelKey) || "gpt-4o-mini");
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onSelectModel = (model: ModelKey) => {
@@ -96,18 +96,14 @@ export function Chat() {
   return (
     <div className="mx-auto max-w-4xl w-full grow flex flex-col">
       <CommandProvider>
-        <ThreadsCombobox />
+        <ThreadsCombobox
+          clearMessages={messages.length > 0 ? clearMessages : () => {}}
+        />
       </CommandProvider>
       <section className="rounded-lg border-border grow border border-dashed flex flex-col mb-28 group">
         <div className="pb-2 flex justify-between items-center gap-4 border-b border-border border-dashed p-2 sm:p-4">
           <LllmSelect llm={llm} onSelectModel={onSelectModel} />
           <div className="flex justify-end">
-            {messages.length > 0 &&
-              ["ready", "error"].includes(chat.status) && (
-                <Button variant="ghost" onClick={clearMessages} size="icon">
-                  <MdDeleteOutline />
-                </Button>
-              )}
             <LlmConfigDropdownMenu llm={llm} />
           </div>
         </div>

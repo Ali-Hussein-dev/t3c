@@ -1,6 +1,5 @@
 "use client";
 import { Message } from "ai";
-import Link from "next/link";
 import {
   CommandDialog,
   CommandEmpty,
@@ -14,11 +13,10 @@ import { useCommand } from "./command-provider";
 import { useThreadStore } from "@/src/hooks/use-thread-store";
 import { useQueryState } from "nuqs";
 import { formatDate } from "date-fns";
-import { Button } from "../ui/button";
 import { FiPlus } from "react-icons/fi";
 import { generateId } from "ai";
 import { useRouter } from "next/navigation";
-import { useModelsStore } from "@/src/hooks/use-models-store";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 type Thread = {
   id: string;
@@ -44,46 +42,45 @@ const ThreadItem = ({
     </div>
   );
 };
-//======================================
-const NewThread = () => {
-  const id = "thread-" + generateId();
-  const selectedModel = useModelsStore((s) => s.model);
-  return (
-    <Button variant="outline" className="gap-1" asChild>
-      <Link href={`/chat/${id}?llm=${selectedModel}`}>
-        <FiPlus /> New thread
-      </Link>
-    </Button>
-  );
-};
-export function ThreadsCombobox() {
+export function ThreadsCombobox({
+  clearMessages,
+}: {
+  clearMessages: () => void;
+}) {
   const { openCommand: open, setOpenCommand: setOpen } = useCommand();
   const threads = useThreadStore((s) => s.threads);
   const [selectedModel] = useQueryState("llm");
   const router = useRouter();
   return (
     <>
-      <div className="flex items-center max-w-4xl mx-auto justify-between mb-4 w-full gap-4 sticky top-0 ">
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="justify-between border-0 bg-transparent dark:bg-transparent grow"
-          onClick={() => setOpen(!open)}
-        >
-          Press H to open chat history
-        </Button>
-
-        <NewThread />
-      </div>
+      <div className="flex items-center max-w-4xl mx-auto justify-between mb-4 w-full gap-4 sticky top-0 "></div>
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput
-          placeholder="Search chat history..."
+          placeholder="Search actions, chat history..."
           className="max-w-sm"
         />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Chat History" className="space-y-3">
+          <CommandGroup heading="Actions" className="">
+            <CommandItem
+              onSelect={() => {
+                const id = "thread-" + generateId();
+                router.push(`/chat/${id}?llm=${selectedModel}`);
+                setOpen(false);
+              }}
+            >
+              <FiPlus /> New thread
+            </CommandItem>
+            <CommandItem
+              onSelect={() => {
+                clearMessages();
+                setOpen(false);
+              }}
+            >
+              <RiDeleteBin6Line /> Delete thread
+            </CommandItem>
+          </CommandGroup>
+          <CommandGroup heading="Chat History" className="">
             {threads.map((o) => (
               <CommandItem
                 key={o.id}

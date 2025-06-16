@@ -12,7 +12,7 @@ const [CommandProv, useCommand] = createSafeContext<CommandCtx>(
 );
 
 const CommandProvider = ({
-  hotKey = "h",
+  hotKey = "k",
   children,
 }: {
   hotKey?: string;
@@ -29,7 +29,7 @@ const CommandProvider = ({
       ) {
         return;
       }
-      if (e.key === hotKey) {
+      if (e.key === hotKey && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setOpenCommand((open) => !open);
       }
