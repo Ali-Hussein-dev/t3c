@@ -60,7 +60,15 @@ export const useChatManager = () => {
     if (finishedStreaming) {
       const messageLength = chat.messages.length;
       if (hasThread) {
-        console.log("adding message");
+        console.info("adding user message");
+
+        addMessage({
+          threadId,
+          message: {
+            ...chat.messages[messageLength - 2],
+          },
+        });
+        console.info("adding assistant message");
         addMessage({
           threadId,
           message: {
@@ -71,23 +79,27 @@ export const useChatManager = () => {
       } else {
         // When user on the chat page without threadId
         const userMessage = chat.messages[0];
-        console.log("inserting thread", { userMessage });
+        console.info("inserting thread", { userMessage });
         const id = threadId || "thread-" + generateId();
 
         insertThread({ id, message: userMessage });
 
+        console.info(`adding first assistant message ${aiProvider}`);
         addMessage({
           threadId: id,
-          message: chat.messages[1],
+          message: {
+            ...chat.messages[1],
+            provider: aiProvider,
+          },
         });
         // maybe push to new thread page
         const searchParams = selectedModel ? `?llm=${selectedModel}` : "";
-        console.log("pushing to new thread", `/chat/${id}${searchParams}`);
+        console.info("pushing to new thread", `/chat/${id}${searchParams}`);
         router.push(`/chat/${id}${searchParams}`);
       }
       setFinishedStreaming(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [finishedStreaming, chat.messages]);
   ///------------------------------handlers
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
