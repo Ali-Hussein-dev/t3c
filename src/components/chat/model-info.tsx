@@ -13,7 +13,7 @@ import { ExternalLinkIcon } from "lucide-react";
 import { Input } from "../ui/input";
 import { toast } from "sonner";
 import * as React from "react";
-import { useChatStore } from "@/src/hooks/use-chat-store";
+import { useModelsStore } from "@/src/hooks/use-models-store";
 import { logosIcons } from "./llms-select";
 
 const ApiKeyInput = ({
@@ -24,7 +24,7 @@ const ApiKeyInput = ({
   apiKey?: string;
 }) => {
   const [value, setValue] = React.useState<string | undefined>(apiKey);
-  const setApiKey = useChatStore((s) => s.setApiKeys);
+  const setApiKey = useModelsStore((s) => s.setApiKeys);
 
   const onSave = () => {
     setApiKey(providerId, value || "");
@@ -71,7 +71,7 @@ export const ModelInfo = ({
   providerId,
 }: (typeof modelsMap)[keyof typeof modelsMap]) => {
   const Logo = logosIcons[providerId as keyof typeof logosIcons];
-  const apiKeys = useChatStore((s) => s.apiKeys);
+  const apiKeys = useModelsStore((s) => s.apiKeys);
   return (
     <Card className="border-border/40 dark:border-border/10 bg-card/80 pb-0">
       <CardHeader>

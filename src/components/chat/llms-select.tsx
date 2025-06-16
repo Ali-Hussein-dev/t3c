@@ -21,7 +21,7 @@ import {
 } from "@/src/components/ui/popover";
 import { OpenAILogo } from "@/src/components/icons/openai";
 import { DeepseekLogo } from "@/src/components/icons/deepseek";
-import { useChatStore } from "@/src/hooks/use-chat-store";
+import { useModelsStore } from "@/src/hooks/use-models-store";
 import { AnthropicLogo } from "@/src/components/icons/anthropic";
 import { PerplexityLogo } from "@/src/components/icons/perplexity";
 export const logosIcons = {
@@ -39,8 +39,8 @@ export function LllmSelect({
   onSelectModel: (llm: ModelKey) => void;
 }) {
   const [open, setOpen] = React.useState(false);
-  const provider = useChatStore((s) => s.provider);
-  const apiKeys = useChatStore((s) => s.apiKeys);
+  const provider = useModelsStore((s) => s.provider);
+  const apiKeys = useModelsStore((s) => s.apiKeys);
 
   const Logo = logosIcons[provider as keyof typeof logosIcons];
   return (
@@ -99,7 +99,7 @@ export function LllmSelect({
                             value={model.id}
                             onSelect={(currentValue) => {
                               onSelectModel(currentValue as ModelKey);
-                              useChatStore.persist.rehydrate();
+                              useModelsStore.persist.rehydrate();
                               setOpen(false);
                             }}
                           >

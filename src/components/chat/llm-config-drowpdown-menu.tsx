@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
 import { modelsMap, ModelDetails, ModelKey } from "@/src/constants/models";
-import { useChatStore } from "@/src/hooks/use-chat-store";
+import { useModelsStore } from "@/src/hooks/use-models-store";
 import * as React from "react";
 
 type SliderConfigType = {
@@ -66,11 +66,11 @@ export function LlmConfigDropdownMenu({
 }: {
   llm: keyof typeof modelsMap;
 }) {
-  const llmsDetails = useChatStore((s) => s.modelsDetails);
+  const llmsDetails = useModelsStore((s) => s.modelsDetails);
   const selectedModel = llmsDetails[llm];
   const selectedModelOptions = llmsDetails[llm]?.options || {};
 
-  const setLlmDetails = useChatStore((s) => s.setModelsDetails);
+  const setLlmDetails = useModelsStore((s) => s.setModelsDetails);
   const list = Object.values(selectedModelOptions) as SliderConfigType[];
   const handleUpdate = ({
     name,

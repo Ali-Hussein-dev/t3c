@@ -3,6 +3,9 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import { ModelKey, ModelDetails, modelsMap } from "@/src/constants/models";
 
 type ChatStore = {
+  /**
+   * Selected model
+   */
   model: ModelKey;
   setModel: (llm: ModelKey) => void;
   provider: string;
@@ -14,7 +17,7 @@ type ChatStore = {
   setApiKeys: (provider: string, apiKey: string) => void;
 };
 
-export const useChatStore = create<ChatStore>()(
+export const useModelsStore = create<ChatStore>()(
   persist(
     (set) => ({
       model: "gpt-4o-mini",

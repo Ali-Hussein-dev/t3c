@@ -54,7 +54,7 @@ export const modelsMap = {
     },
     options: providersConfigs.anthropic,
   },
-  "sonnar": {
+  sonnar: {
     id: "sonnar",
     name: "sonnar",
     description:
@@ -82,7 +82,6 @@ export const modelsMap = {
   },
 } as const;
 
-
 export type ModelKey = keyof typeof modelsMap;
 
 export type ModelDetails = {
@@ -92,7 +91,7 @@ export type ModelDetails = {
   providerId: string;
   provider: string;
   logo: string;
-  options: typeof providersConfigs[keyof typeof providersConfigs];
+  options: (typeof providersConfigs)[keyof typeof providersConfigs];
   urls: {
     pricing: string;
   };
@@ -102,12 +101,12 @@ export type ModelDetails = {
 export const modelsList = Object.values(modelsMap);
 
 export const groupedModelsByProvider = modelsList.reduce((acc, model) => {
-    if (!acc[model.providerId]) {
-      acc[model.providerId] = [];
-    }
-    acc[model.providerId].push(model);
-    return acc;
-  }, {} as Record<string, typeof modelsList>);
+  if (!acc[model.providerId]) {
+    acc[model.providerId] = [];
+  }
+  acc[model.providerId].push(model);
+  return acc;
+}, {} as Record<string, typeof modelsList>);
 
 
 // export const groupedModelsByProvider = Object.groupBy(modelsList, model => model.providerId);
