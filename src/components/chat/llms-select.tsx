@@ -74,11 +74,10 @@ export function LllmSelect({
                   logosIcons[models[0].providerId as keyof typeof logosIcons];
                 const hasApiKey = apiKeys[provider];
                 return (
-                  <>
-                    <CommandGroup
-                      key={provider}
-                      className="space-y-2 mb-3 border-b border-border/50"
-                    >
+                  <CommandGroup
+                    key={provider}
+                    className="space-y-2 mb-3 border-b border-border/50"
+                  >
                       <div className="font-semibold flex items-center gap-2 mb-1 px-2">
                         <div className="size-4">
                           <Logo />
@@ -111,7 +110,6 @@ export function LllmSelect({
                         );
                       })}
                     </CommandGroup>
-                  </>
                 );
               }
             )}

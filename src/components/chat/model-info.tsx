@@ -25,7 +25,9 @@ const ApiKeyInput = ({
 }) => {
   const [value, setValue] = React.useState<string | undefined>(apiKey);
   const setApiKey = useModelsStore((s) => s.setApiKeys);
-
+  React.useEffect(() => {
+    setValue(apiKey);
+  }, [apiKey]);
   const onSave = () => {
     setApiKey(providerId, value || "");
     toast.success("API key saved locally");
@@ -39,7 +41,6 @@ const ApiKeyInput = ({
     <div className="flex gap-2 items-center">
       <Input
         placeholder={`Enter your API key for ${providerId}`}
-        defaultValue={apiKey}
         value={value || ""}
         onChange={(e) => setValue(e.target.value)}
         type="password"
