@@ -6,11 +6,12 @@ import { generateId } from "ai";
 import * as React from "react";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/src/components/auth/auth-provider";
 
 export const useChatManager = () => {
   const params = useParams<{ threadId: string }>();
   const threadId = params.threadId;
-
+  const { session } = useAuth();
   const selectedModel = useModelsStore((s) => s.model);
   const aiProvider = useModelsStore((s) => s.provider);
   const modelsDetails = useModelsStore((s) => s.modelsDetails);
@@ -104,6 +105,10 @@ export const useChatManager = () => {
   ///------------------------------handlers
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!session?.user) {
+      toast.error("You must log in to chat");
+      return;
+    }
     chat.handleSubmit(e);
   };
   const clearMessages = () => {
