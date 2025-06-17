@@ -6,10 +6,12 @@ export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
   // if "next" is in param, use it as the redirect URL
-  let next = searchParams.get('next') ?? '/'
+  // Always redirect to /chat after sign-in
+  // eslint-disable-next-line prefer-const
+  let next = searchParams.get('next') ?? '/chat'
   if (!next.startsWith('/')) {
     // if "next" is not a relative URL, use the default
-    next = '/'
+    next = '/chat'
   }
 
   if (code) {
