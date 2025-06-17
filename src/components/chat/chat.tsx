@@ -2,12 +2,11 @@
 import { ModelKey, modelsMap } from "@/src/constants/models";
 import { Button } from "@/src/components/ui/button";
 import { Textarea } from "@/src/components/ui/textarea";
-import { LllmSelect } from "@/src/components/chat/llms-select";
+import { LllmSelect, logosIcons } from "@/src/components/chat/llms-select";
 import { ModelInfo } from "@/src/components/chat/model-info";
-import { MdDeleteOutline } from "react-icons/md";
 import { useChatManager } from "@/src/hooks/use-chat-manager";
 import { Message } from "@/src/components/chat/message";
-import { Calendar, StopCircle } from "lucide-react";
+import { Calendar, Plus, StopCircle, Trash } from "lucide-react";
 import { LlmConfigDropdownMenu } from "./llm-config-drowpdown-menu";
 import { useChat } from "@ai-sdk/react";
 import * as React from "react";
@@ -16,9 +15,12 @@ import { useThreadStore } from "@/src/hooks/use-thread-store";
 import { ThreadsCombobox } from "./thread-command";
 import { formatDate } from "date-fns";
 import { CommandProvider } from "./command-provider";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { VscArrowSmallUp } from "react-icons/vsc";
 import { cn } from "@/src/lib/utils";
+import { BsCommand } from "react-icons/bs";
+import { Badge } from "@/src/components/ui/badge";
+import { generateId } from "ai";
 
 const PromptArea = ({
   chat,
@@ -52,18 +54,20 @@ const PromptArea = ({
           className="rounded-md min-h-[38px] flex-1 resize-none scroll-m-2 focus:ring-0 focus:outline-none pr-9 field-sizing-content border-none max-h-[25vh] sm:max-h-[35vh] md:max-h-[50vh] bg-input/30"
           onKeyDown={handleKeyDown}
         />
-        {status === "streaming" ? (
-          <Button onClick={stop} type="button">
-            <StopCircle />
-          </Button>
-        ) : (
-          <Button
-            disabled={status === "submitted" || status === "error"}
-            size="icon"
-          >
-            <VscArrowSmallUp className="size-6" />
-          </Button>
-        )}
+        <div>
+          {status === "streaming" ? (
+            <Button onClick={stop} type="button" size="icon">
+              <StopCircle />
+            </Button>
+          ) : (
+            <Button
+              disabled={status === "submitted" || status === "error"}
+              size="icon"
+            >
+              <VscArrowSmallUp className="size-6" />
+            </Button>
+          )}
+        </div>
       </form>
     </div>
   );
@@ -91,8 +95,7 @@ export function Chat() {
     }
   };
   const thread = useThreadStore((s) => s.getThreadById(threadId));
-
-  // const threadMessages = thread?.messages || messages;
+  const router = useRouter();
   return (
     <div className="mx-auto max-w-4xl w-full grow flex flex-col">
       <CommandProvider>
@@ -100,10 +103,25 @@ export function Chat() {
           clearMessages={messages.length > 0 ? clearMessages : () => {}}
         />
       </CommandProvider>
-      <section className="rounded-lg border-border grow border border-dashed flex flex-col mb-28 group">
-        <div className="pb-2 flex justify-between items-center gap-4 border-b border-border border-dashed p-2 sm:p-4">
+      <section className="rounded-lg grow flex flex-col mb-28 group">
+        <div className="pb-2 flex justify-between items-center gap-4 border rounded-sm bg-muted/20 border-border border-dashed p-2 sm:p-4">
           <LllmSelect llm={llm} onSelectModel={onSelectModel} />
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-1">
+            {messages.length > 0 && (
+              <Button variant="ghost" size="icon" onClick={clearMessages}>
+                <Trash />
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                const id = "thread-" + generateId();
+                router.push(`/chat/${id}?llm=${llm}`);
+              }}
+            >
+              <Plus />
+            </Button>
             <LlmConfigDropdownMenu llm={llm} />
           </div>
         </div>
@@ -111,19 +129,53 @@ export function Chat() {
           <div className="flex gap-2 flex-col p-2 sm:p-4 py-6 sm:py-8 grow">
             <div className="">
               <ModelInfo {...modelsMap[llm]} />
+              <div className="flex items-center gap-1 justify-center pt-4">
+                <Badge variant="secondary" className="py-2">
+                  Chat history
+                  <BsCommand className="h-6" /> + K
+                </Badge>
+              </div>
             </div>
           </div>
         )}
         {
           <div className="px-2 sm:px-4 py-6 grow">
-            <div className="space-y-3">
-              {messages.map((message, i) => (
-                <div key={i} className={cn(message.role !== "user" && "pb-2")}>
-                  <Message role={message.role} content={message.content} />
-                </div>
-              ))}
+            <div className="space-y-4">
+              {/* {JSON.stringify(thread?.messages, null, 2)} */}
+              {messages.map((message, i) => {
+                const provider =
+                  message.role == "assistant"
+                    ? thread?.messages[i]?.provider
+                    : undefined;
+                const Logo = provider
+                  ? logosIcons[provider as keyof typeof logosIcons]
+                  : null;
+                return (
+                  <div
+                    key={i}
+                    className={cn(message.role !== "user" && "pb-2")}
+                  >
+                    <div
+                      className={cn(
+                        message.role == "assistant" &&
+                          "justify-start flex items-start gap-2"
+                      )}
+                    >
+                      {Logo && (
+                        <Badge
+                          variant="outline"
+                          className="rounded-full border-border p-0 size-6 mt-1"
+                        >
+                          <Logo />
+                        </Badge>
+                      )}
+                      <Message role={message.role} content={message.content} />
+                    </div>
+                  </div>
+                );
+              })}
               {chat.status === "submitted" && (
-                <div className="w-full">Thinking a bit...</div>
+                <div className="w-full">Thinking...</div>
               )}
             </div>
           </div>
