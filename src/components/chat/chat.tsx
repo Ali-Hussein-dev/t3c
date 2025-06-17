@@ -42,33 +42,35 @@ const PromptArea = ({
     }
   };
   return (
-    <div className="fixed bottom-0 right-0 sm:pb-2 pt-8 w-full items-center flex justify-center bg-gradient-to-t from-background via-background/40 to-transparent">
-      <form
-        onSubmit={onSubmit}
-        className="flex gap-2 px-2 py-3 sm:py-6 w-full sm:px-4 border-y sm:border border-border border-dashed bg-background max-w-4xl mx-auto sm:rounded-lg pb-4 shadow-lg"
-      >
-        <Textarea
-          placeholder="Type your message here..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          className="rounded-md min-h-[38px] flex-1 resize-none scroll-m-2 focus:ring-0 focus:outline-none pr-9 field-sizing-content border-none max-h-[25vh] sm:max-h-[35vh] md:max-h-[50vh] bg-input/30"
-          onKeyDown={handleKeyDown}
-        />
-        <div>
-          {status === "streaming" ? (
-            <Button onClick={stop} type="button" size="icon">
-              <StopCircle />
-            </Button>
-          ) : (
-            <Button
-              disabled={status === "submitted" || status === "error"}
-              size="icon"
-            >
-              <VscArrowSmallUp className="size-6" />
-            </Button>
-          )}
-        </div>
-      </form>
+    <div className="fixed bottom-0 right-0 pt-8 w-full items-center flex justify-center">
+      <div className="p-2 pb-3 rounded-t-lg bg-secondary/60 backdrop-blur-xl w-full max-w-4xl">
+        <form
+          onSubmit={onSubmit}
+          className="flex gap-2 px-2 py-3 sm:py-6 w-full sm:px-4 border border-border border-dashed bg-background max-w-4xl mx-auto rounded-lg pb-4 shadow-lg"
+        >
+          <Textarea
+            placeholder="Type your message here..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            className="rounded-md min-h-[38px] flex-1 resize-none scroll-m-2 focus:ring-0 focus:outline-none pr-9 field-sizing-content border-none max-h-[25vh] sm:max-h-[35vh] md:max-h-[50vh] bg-input/30"
+            onKeyDown={handleKeyDown}
+          />
+          <div>
+            {status === "streaming" ? (
+              <Button onClick={stop} type="button" size="icon">
+                <StopCircle />
+              </Button>
+            ) : (
+              <Button
+                disabled={status === "submitted" || status === "error"}
+                size="icon"
+              >
+                <VscArrowSmallUp className="size-6" />
+              </Button>
+            )}
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
@@ -126,7 +128,7 @@ export function Chat() {
           </div>
         </div>
         {llm && messages.length < 1 && (
-          <div className="flex gap-2 flex-col p-2 sm:p-4 py-6 sm:py-8 grow">
+          <div className="flex gap-2 flex-col py-6 sm:py-8 grow">
             <div className="">
               <ModelInfo {...modelsMap[llm]} />
               <div className="flex items-center gap-1 justify-center pt-4">
