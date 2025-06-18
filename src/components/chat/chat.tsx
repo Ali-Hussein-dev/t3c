@@ -21,6 +21,7 @@ import { cn } from "@/src/lib/utils";
 import { BsCommand } from "react-icons/bs";
 import { Badge } from "@/src/components/ui/badge";
 import { generateId } from "ai";
+import { useModelsStore } from "@/src/hooks/use-models-store";
 
 const PromptArea = ({
   chat,
@@ -80,7 +81,8 @@ export function Chat() {
   const params = useParams<{ threadId: string }>();
   const threadId = params.threadId;
   const { llm, setLlm, chat, clearMessages, onSubmit } = useChatManager();
-
+  const aiProvider = useModelsStore((s) => s.provider);
+  const apiKey = useModelsStore((s) => s.apiKeys[aiProvider]);
   const [currentModel, setModel] = useQueryState("llm");
   const { messages } = chat;
 
@@ -127,8 +129,45 @@ export function Chat() {
             <LlmConfigDropdownMenu llm={llm} />
           </div>
         </div>
-        {llm && messages.length < 1 && (
-          <div className="flex gap-2 flex-col py-6 sm:py-8 grow">
+        {messages.length > 0 && (
+          <div className="px-2 sm:px-4 py-6 grow space-y-4">
+            {/* {JSON.stringify(thread?.messages, null, 2)} */}
+            {messages.map((message, i) => {
+              const provider =
+                message.role == "assistant"
+                  ? thread?.messages[i]?.provider
+                  : undefined;
+              const Logo = provider
+                ? logosIcons[provider as keyof typeof logosIcons]
+                : null;
+              return (
+                <div key={i} className={cn(message.role !== "user" && "pb-2")}>
+                  <div
+                    className={cn(
+                      message.role == "assistant" &&
+                        "justify-start flex items-start gap-2"
+                    )}
+                  >
+                    {Logo && (
+                      <Badge
+                        variant="outline"
+                        className="rounded-full border-border p-0 size-6 mt-1"
+                      >
+                        <Logo />
+                      </Badge>
+                    )}
+                    <Message role={message.role} content={message.content} />
+                  </div>
+                </div>
+              );
+            })}
+            {chat.status === "submitted" && (
+              <div className="w-full">Thinking...</div>
+            )}
+          </div>
+        )}
+        {llm && (messages.length < 1 || !apiKey) && (
+          <div className="flex gap-2 flex-col py-2 grow md:py-6">
             <div className="">
               <ModelInfo {...modelsMap[llm]} />
               <div className="flex items-center gap-1 justify-center pt-4">
@@ -140,48 +179,6 @@ export function Chat() {
             </div>
           </div>
         )}
-        {
-          <div className="px-2 sm:px-4 py-6 grow">
-            <div className="space-y-4">
-              {/* {JSON.stringify(thread?.messages, null, 2)} */}
-              {messages.map((message, i) => {
-                const provider =
-                  message.role == "assistant"
-                    ? thread?.messages[i]?.provider
-                    : undefined;
-                const Logo = provider
-                  ? logosIcons[provider as keyof typeof logosIcons]
-                  : null;
-                return (
-                  <div
-                    key={i}
-                    className={cn(message.role !== "user" && "pb-2")}
-                  >
-                    <div
-                      className={cn(
-                        message.role == "assistant" &&
-                          "justify-start flex items-start gap-2"
-                      )}
-                    >
-                      {Logo && (
-                        <Badge
-                          variant="outline"
-                          className="rounded-full border-border p-0 size-6 mt-1"
-                        >
-                          <Logo />
-                        </Badge>
-                      )}
-                      <Message role={message.role} content={message.content} />
-                    </div>
-                  </div>
-                );
-              })}
-              {chat.status === "submitted" && (
-                <div className="w-full">Thinking...</div>
-              )}
-            </div>
-          </div>
-        }
         {thread && messages.length > 0 && (
           <div className="opacity-90 group-hover:opacity-100 px-3.5 py-3 transition-all duration-300 border-t border-border border-dashed flex gap-2 justify-start items-center">
             <div className="text-xs text-muted-foreground flex items-center gap-2">
