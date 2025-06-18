@@ -109,6 +109,10 @@ export const useChatManager = () => {
       toast.error("You must log in to chat");
       return;
     }
+    if (!apiKey) {
+      toast.error(`API key for selected ${aiProvider} not found or not added`);
+      return;
+    }
     chat.handleSubmit(e);
   };
   const clearMessages = () => {
