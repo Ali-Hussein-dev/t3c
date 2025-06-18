@@ -54,32 +54,32 @@ export const modelsMap = {
     },
     options: providersConfigs.anthropic,
   },
-  sonnar: {
-    id: "sonnar",
-    name: "sonnar",
-    description:
-      "Perplexity's lightweight offering with search grounding, quicker and cheaper than Sonar Pro.",
-    providerId: "perplexity",
-    provider: "Perplexity",
-    logo: "perplexity",
-    urls: {
-      pricing: "https://docs.perplexity.ai/docs/pricing",
-    },
-    options: providersConfigs.perplexity,
-  },
-  "sonnar-pro": {
-    id: "sonnar-pro",
-    name: "sonnar-pro",
-    description:
-      "Perplexity's lightweight offering with search grounding, quicker and cheaper than Sonar Pro.",
-    providerId: "perplexity",
-    provider: "Perplexity",
-    logo: "perplexity",
-    urls: {
-      pricing: "https://docs.perplexity.ai/docs/pricing",
-    },
-    options: providersConfigs.perplexity,
-  },
+  // sonnar: {
+  //   id: "sonnar",
+  //   name: "sonnar",
+  //   description:
+  //     "Perplexity's lightweight offering with search grounding, quicker and cheaper than Sonar Pro.",
+  //   providerId: "perplexity",
+  //   provider: "Perplexity",
+  //   logo: "perplexity",
+  //   urls: {
+  //     pricing: "https://docs.perplexity.ai/docs/pricing",
+  //   },
+  //   options: providersConfigs.perplexity,
+  // },
+  // "sonnar-pro": {
+  //   id: "sonnar-pro",
+  //   name: "sonnar-pro",
+  //   description:
+  //     "Perplexity's lightweight offering with search grounding, quicker and cheaper than Sonar Pro.",
+  //   providerId: "perplexity",
+  //   provider: "Perplexity",
+  //   logo: "perplexity",
+  //   urls: {
+  //     pricing: "https://docs.perplexity.ai/docs/pricing",
+  //   },
+  //   options: providersConfigs.perplexity,
+  // },
 } as const;
 
 export type ModelKey = keyof typeof modelsMap;
