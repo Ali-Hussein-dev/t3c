@@ -80,6 +80,32 @@ export const modelsMap = {
     },
     options: providersConfigs.perplexity,
   },
+  "grok-3": {
+    id: "grok-3",
+    name: "grok-3",
+    description:
+      "Excels at enterprise use cases like data extraction, coding, and text summarization. Possesses deep domain knowledge in finance, healthcare, law, and science.",
+    providerId: "xai",
+    provider: "XAI",
+    logo: "xai",
+    urls: {
+      pricing: "https://console.x.ai",
+    },
+    options: providersConfigs.xai,
+  },
+  "grok-3-mini": {
+    id: "grok-3-mini",
+    name: "grok-3-mini",
+    description:
+      "A lightweight model that thinks before responding. Fast, smart, and great for logic-based tasks that do not require deep domain knowledge. The raw thinking traces are accessible.",
+    providerId: "xai",
+    provider: "XAI",
+    logo: "xai",
+    urls: {
+      pricing: "https://console.x.ai",
+    },
+    options: providersConfigs.xai,
+  },
 } as const;
 
 export type ModelKey = keyof typeof modelsMap;

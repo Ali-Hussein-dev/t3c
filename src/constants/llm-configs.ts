@@ -244,5 +244,31 @@ export const providersConfigs = {
       min: -2,
       max: 2,
     },
+  },
+  xai:{
+    temperature: {
+      ...common.temperature,
+      component: "slider",
+      default: 1,
+      value: undefined,
+      min: 0.01,
+      max: 2,
+    },
+    maxOutputTokens: {
+      ...common.maxOutputTokens,
+      component: "slider",
+      default: 4096,
+      value: undefined,
+      min: 300,
+      max: 8192,
+    },
+    topP: {
+      ...common.topP,
+      component: "slider",
+      default: 1,
+      value: undefined,
+      min: 0.01,
+      max: 1,
+    },
   }
 } as const;

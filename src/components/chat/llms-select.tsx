@@ -24,11 +24,13 @@ import { DeepseekLogo } from "@/src/components/icons/deepseek";
 import { useModelsStore } from "@/src/hooks/use-models-store";
 import { AnthropicLogo } from "@/src/components/icons/anthropic";
 import { PerplexityLogo } from "@/src/components/icons/perplexity";
+import { XaiLogo } from "@/src/components/icons/xai";
 export const logosIcons = {
   openai: OpenAILogo,
   deepseek: DeepseekLogo,
   anthropic: AnthropicLogo,
   perplexity: PerplexityLogo,
+  xai: XaiLogo,
 };
 
 export function LllmSelect({
@@ -78,38 +80,38 @@ export function LllmSelect({
                     key={provider}
                     className="space-y-2 mb-3 border-b border-border/50"
                   >
-                      <div className="font-semibold flex items-center gap-2 mb-1 px-2">
-                        <div className="size-4">
-                          <Logo />
-                        </div>
-                        <div className="flex items-center justify-between w-full">
-                          {models[0].provider}
-                          {/* <span className="font-normal">{models.length}</span> */}
-                          {hasApiKey && (
-                            <span className="size-3 border rounded-full bg-green-500 border-green-600" />
-                          )}
-                        </div>
+                    <div className="font-semibold flex items-center gap-2 mb-1 px-2">
+                      <div className="size-4">
+                        <Logo />
                       </div>
-                      {models.map((model) => {
-                        // const Logo = logos[model.providerId as keyof typeof logos];
-                        return (
-                          <CommandItem
-                            key={model.name}
-                            value={model.id}
-                            onSelect={(currentValue) => {
-                              onSelectModel(currentValue as ModelKey);
-                              useModelsStore.persist.rehydrate();
-                              setOpen(false);
-                            }}
-                          >
-                            <div className="size-5 border rounded-full border-border/50 grid place-items-center">
-                              {llm === model.id && <Check className="size-3" />}
-                            </div>
-                            {model.name}
-                          </CommandItem>
-                        );
-                      })}
-                    </CommandGroup>
+                      <div className="flex items-center justify-between w-full">
+                        {models[0].provider}
+                        {/* <span className="font-normal">{models.length}</span> */}
+                        {hasApiKey && (
+                          <span className="size-3 border rounded-full bg-green-500 border-green-600" />
+                        )}
+                      </div>
+                    </div>
+                    {models.map((model) => {
+                      // const Logo = logos[model.providerId as keyof typeof logos];
+                      return (
+                        <CommandItem
+                          key={model.name}
+                          value={model.id}
+                          onSelect={(currentValue) => {
+                            onSelectModel(currentValue as ModelKey);
+                            useModelsStore.persist.rehydrate();
+                            setOpen(false);
+                          }}
+                        >
+                          <div className="size-5 border rounded-full border-border/50 grid place-items-center">
+                            {llm === model.id && <Check className="size-3" />}
+                          </div>
+                          {model.name}
+                        </CommandItem>
+                      );
+                    })}
+                  </CommandGroup>
                 );
               }
             )}
