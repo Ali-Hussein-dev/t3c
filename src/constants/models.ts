@@ -51,6 +51,21 @@ export const modelsMap = {
     logo: "anthropic",
     urls: {
       pricing: "https://platform.anthropic.com/docs/pricing",
+      // modelPage: "https://docs.anthropic.com/claude/docs/models-overview",
+    },
+    options: providersConfigs.anthropic,
+  },
+  "claude-3-opus-latest": {
+    id: "claude-3-opus-latest",
+    name: "claude-3-opus-latest",
+    description:
+      "It delivers sustained performance on long-running tasks that require focused effort and thousands of steps, with the ability to work continuously for several hours—dramatically outperforming all Sonnet models and significantly expanding what AI agents can accomplish.",
+    providerId: "anthropic",
+    provider: "Anthropic",
+    logo: "anthropic",
+    urls: {
+      pricing: "https://platform.anthropic.com/docs/pricing",
+      // modelPage: "https://docs.anthropic.com/claude/docs/models-overview",
     },
     options: providersConfigs.anthropic,
   },
