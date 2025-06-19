@@ -12,9 +12,13 @@ export const POST = async (req: Request) => {
   const options= body.options || {} 
   try {
     const result = streamText({
-      model: provider(body.model),
-      messages: body.messages,
-      ...options
+       model: provider(body.model),
+       messages: body.messages,
+      ...options,
+      onError: (error) => {
+        console.log("------------ERROR");
+        console.error(error);
+      },
     });
     return result.toDataStreamResponse();
   } catch (error) {
